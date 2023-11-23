@@ -7,7 +7,7 @@ const jwtSecretKey = `${process.env.SECRET_KEY}`;
 export const GET = async (req: NextRequest) => {
   const token = req.cookies.get("X-Authorization")?.value;
   if (!token) {
-    throw "error";
+    return NextResponse.json({ message: "not authorized" }, { status: 401 });
   }
 
   const member = verify(token, jwtSecretKey);

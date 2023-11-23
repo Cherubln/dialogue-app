@@ -13,9 +13,9 @@ import cirlceWrapper from "@/public/logoWrapper.svg";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useChatSocket } from "../api/chat/useChatSocket";
 import { useChatScroll } from "./useChatScroll";
-import VideoButton from "./VideoButton";
+// import VideoButton from "./VideoButton";
 import { useSearchParams } from "next/navigation";
-import Video from "./Video";
+// import Video from "./Video";
 
 type User = {
   id: string;
@@ -301,7 +301,7 @@ const Chat = () => {
             </div>
             <div className="text-base">{oppositeParticipant?.username}</div>
           </div>
-          <VideoButton />
+          {/* <VideoButton /> */}
         </div>
 
         <div
@@ -502,12 +502,12 @@ const Chat = () => {
             )}
           </button>
         </form>
-        <Video
+        {/* <Video
           audio={true}
           video={true}
           chatId={currentChat}
           videoOn={!!video}
-        />
+        /> */}
       </div>
     </div>
   );
