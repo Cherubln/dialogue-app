@@ -17,7 +17,12 @@ export default async function handler(
     if (!token) {
       throw "error";
     }
-    const { userId } = verify(token, jwtSecretKey);
+    const member = verify(token, jwtSecretKey);
+    let userId;
+
+    if (typeof member === "string") {
+      userId = member;
+    } else userId = member.userId;
 
     const user = await prisma.user.findUnique({
       where: {
