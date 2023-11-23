@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { z } from "zod";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -52,11 +53,12 @@ function Register() {
       setId(res.data.id);
       setUsername(res.data.username);
     } catch (error) {
-      const errorMessage = !isRegister
-        ? error?.response.data.message
-        : "An unexpected error occured.";
-
-      setError(errorMessage);
+      if (error instanceof AxiosError) {
+        const errorMessage = !isRegister
+          ? error?.response?.data.message
+          : "An unexpected error occured.";
+        setError(errorMessage);
+      }
     }
   });
 

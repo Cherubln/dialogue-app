@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useLayoutEffect } from "react";
 import { useAuthContext } from "../auth-provider";
 

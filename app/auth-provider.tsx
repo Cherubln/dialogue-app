@@ -2,11 +2,13 @@
 
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 
-type Message = {
+export type Message = {
   id: string;
   content: string;
-  chatId: string;
-  authorId: string;
+  chatId?: string;
+  authorId?: string;
+  username?: string;
+  createdAt: string | number | Date;
 };
 
 type UserContextType = {

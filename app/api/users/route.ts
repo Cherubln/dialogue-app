@@ -9,7 +9,15 @@ export const GET = async (req: NextRequest) => {
   if (!token) {
     throw "error";
   }
-  const { userId } = verify(token, jwtSecretKey);
+
+  const member = verify(token, jwtSecretKey);
+
+  let userId;
+
+  if (typeof member === "string") {
+    userId = member;
+  } else userId = member.userId;
+
   const users = await prisma.user.findMany({
     where: {
       NOT: {

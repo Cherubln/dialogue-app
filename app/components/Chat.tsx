@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { z } from "zod";
@@ -7,8 +8,7 @@ import classNames from "classnames";
 import { useForm } from "react-hook-form";
 import Timeago from "react-timeago";
 import { useEffect, useState, useRef, ElementRef } from "react";
-import { useSocket } from "../socket-provider";
-import { useAuthContext } from "../auth-provider";
+import { Message, useAuthContext } from "../auth-provider";
 import cirlceWrapper from "@/public/logoWrapper.svg";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useChatSocket } from "../api/chat/useChatSocket";
@@ -42,7 +42,9 @@ const Chat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState("");
-  const [oppositeParticipant, setOppositeParticipant] = useState(null);
+  const [oppositeParticipant, setOppositeParticipant] = useState<{
+    username: string | null;
+  }>({ username: null });
   const [showUsersPanel, setShowUsersPanel] = useState(true);
   const bottomRef = useRef<ElementRef<"div">>(null);
   const searchParms = useSearchParams();
@@ -408,7 +410,7 @@ const Chat = () => {
           })}
         >
           {messages?.length > 0 &&
-            messages?.map((message) => {
+            messages?.map((message: Message) => {
               if (message.authorId === currentUserId) {
                 return (
                   <div className="chat chat-end" key={message.id}>
@@ -425,7 +427,7 @@ const Chat = () => {
                     <div className="chat-footer opacity-50">
                       <time className="text-xs hover:underline">
                         <Timeago
-                          date={message.createdAt}
+                          date={message?.createdAt}
                           title={new Date().toLocaleString("en-US", {
                             dateStyle: "full",
                             timeStyle: "short",

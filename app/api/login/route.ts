@@ -67,11 +67,16 @@ export const GET = async (req: NextRequest) => {
     return NextResponse.json({ message: "not logged in" }, { status: 401 });
   }
 
-  const { userId } = verify(token.value, jwtSecretKey);
+  const member = verify(token.value, jwtSecretKey);
+  let userId;
+
+  if (typeof member === "string") {
+    userId = member;
+  } else userId = member.userId;
 
   const user: User = await prisma.user.findUnique({
     where: {
-      id: userId,
+      id: userId as string,
     },
   });
 
