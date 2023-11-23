@@ -5,6 +5,7 @@ import axios from "axios";
 import Image from "next/image";
 import classNames from "classnames";
 import { useForm } from "react-hook-form";
+import Timeago from "react-timeago";
 import { useEffect, useState, useRef, ElementRef } from "react";
 import { useSocket } from "../socket-provider";
 import { useAuthContext } from "../auth-provider";
@@ -12,6 +13,9 @@ import cirlceWrapper from "@/public/logoWrapper.svg";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useChatSocket } from "../api/chat/useChatSocket";
 import { useChatScroll } from "./useChatScroll";
+import VideoButton from "./VideoButton";
+import { useSearchParams } from "next/navigation";
+import Video from "./Video";
 
 type User = {
   id: string;
@@ -26,7 +30,6 @@ const messageSchema = z.object({
 type ChatForm = z.infer<typeof messageSchema>;
 
 const Chat = () => {
-  const { isConnected } = useSocket();
   const {
     username,
     id: currentUserId,
@@ -38,10 +41,13 @@ const Chat = () => {
   const [isMessagesLoading, setIsMessagesLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isChatLoading, setIsChatLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState("");
   const [oppositeParticipant, setOppositeParticipant] = useState(null);
   const [showUsersPanel, setShowUsersPanel] = useState(true);
-  const chatRef = useRef<ElementRef<"div">>(null);
   const bottomRef = useRef<ElementRef<"div">>(null);
+  const searchParms = useSearchParams();
+  const video = searchParms?.get("video");
+
   const {
     register,
     handleSubmit,
@@ -91,6 +97,7 @@ const Chat = () => {
     participantTwoId: string
   ) => {
     try {
+      setCurrentUser(participantTwoId);
       setIsChatLoading(true);
       setIsMessagesLoading(true);
       const { data: chat } = await axios.post("/api/chat", {
@@ -125,141 +132,160 @@ const Chat = () => {
 
   useChatSocket(chatKey);
 
-  useChatScroll({ chatRef, bottomRef });
+  useChatScroll({ bottomRef });
 
   console.log(messages);
 
   return (
-    <div className="grid md:grid-cols-[32%,auto]">
+    <div className={classNames("grid ", { "md:grid-cols-[32%,auto]": !video })}>
       {/* left side */}
-      <div
-        className={classNames(
-          "flex-col gap-3 h-screen flex p-3 bg-base-200 md:border-r border-base-300 md:shadow-sm",
-          { "hidden md:flex": !showUsersPanel }
-        )}
-      >
-        <div className="flex justify-between items-center glass rounded-box p-3 bg-base-300">
-          <div
-            className={`relative w-fit capitalize text-transparent bg-clip-text bg-gradient-to-r from-orange-700 via-orange-600 to-orange-400 font-extrabold text-2xl`}
-          >
-            <span className="p-2 inline-block ">Dialogue</span>
-            <Image
-              src={cirlceWrapper}
-              className="absolute left-0 top-0 h-full w-full "
-              alt="circle"
-            />
-          </div>
-          <div>
-            <div className="dropdown dropdown-hover dropdown-end">
-              <label
-                tabIndex={0}
-                className="rounded-box cursor-pointer p-1 m-1 btn-ghost"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  className="inline-block w-5 h-5 stroke-current"
+      {!video && (
+        <div
+          className={classNames(
+            "flex-col gap-3 h-screen flex p-3 bg-base-200 md:border-r border-base-300 md:shadow-sm",
+            {
+              "hidden md:flex": !showUsersPanel,
+            }
+          )}
+        >
+          <div className="flex justify-between items-center glass rounded-box p-3 bg-base-300">
+            <div
+              className={`relative w-fit capitalize text-transparent bg-clip-text bg-gradient-to-r from-orange-700 via-orange-600 to-orange-400 font-extrabold text-2xl`}
+            >
+              <span className="p-2 inline-block ">Dialogue</span>
+              <Image
+                src={cirlceWrapper}
+                className="absolute left-0 top-0 h-full w-full "
+                alt="circle"
+              />
+            </div>
+            <div>
+              <div className="dropdown dropdown-hover dropdown-end">
+                <label
+                  tabIndex={0}
+                  className="rounded-box cursor-pointer p-1 m-1 btn-ghost"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
-                  ></path>
-                </svg>
-              </label>
-              <div
-                tabIndex={0}
-                className="flex flex-col-reverse gap-2 dropdown-content z-[1] menu p-2 shadow bg-base-300 glass rounded-box w-52"
-              >
-                <span className="btn btn-sm btn-ghost text-primary text-sm w-full font-semibold">
-                  <a>Logout</a>
-                </span>
-                <label className="flex justify-center cursor-pointer gap-2">
-                  <span className="label-text">Dark</span>
-                  <input
-                    type="checkbox"
-                    value="aqua"
-                    className="toggle theme-controller"
-                  />
-                  <span className="label-text">Light</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    className="inline-block w-5 h-5 stroke-current"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"
+                    ></path>
+                  </svg>
                 </label>
+                <div
+                  tabIndex={0}
+                  className="flex flex-col-reverse gap-2 dropdown-content z-[1] menu p-2 shadow bg-base-300 glass rounded-box w-52"
+                >
+                  <span className="btn btn-sm btn-ghost text-primary text-sm w-full font-semibold">
+                    <a>Logout</a>
+                  </span>
+                  <label className="flex justify-center cursor-pointer gap-2">
+                    <span className="label-text">Dark</span>
+                    <input
+                      type="checkbox"
+                      value="fantasy"
+                      className="toggle theme-controller"
+                    />
+                    <span className="label-text">Light</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="border border-base-100   rounded-box overflow-hidden">
+            <h2 className="text-xl font-semibold border-b border-base-300 p-3 text-primary shadow bg-base-100">
+              Chats
+            </h2>
+            <div className="h-[calc(100vh-10rem)] overflow-auto">
+              <div className="">
+                {isLoading &&
+                  new Array(7).fill(0).map((user, index) => (
+                    <div
+                      key={`${user}-${index}`}
+                      className="flex gap-2 items-center p-3"
+                    >
+                      <div className="skeleton w-8 h-8 mask mask-squircle"></div>
+                      <div className="flex flex-col gap-4">
+                        <div className="skeleton h-2 w-52"></div>
+                      </div>
+                    </div>
+                  ))}
+                {!isLoading &&
+                  users.map((user) => {
+                    return (
+                      <div
+                        key={user.id}
+                        className={classNames(
+                          "hover:bg-base-300 hover:text-primary  hover:border-none hover:glass p-3 cursor-pointer border-b last:border-b-0 border-base-100  font-semibold",
+                          {
+                            "bg-base-300 glass text-primary border-none":
+                              currentUser == user.id,
+                          }
+                        )}
+                        onClick={() =>
+                          handleChatClick(`${currentUserId}`, user.id)
+                        }
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className="avatar placeholder ">
+                            <div
+                              className={
+                                "rounded-box w-10 bg-base-200 text-base-content glass mask mask-squircle"
+                              }
+                            >
+                              <span className="text-xl uppercase font-semibold">
+                                {user.username.substring(0, 1)}
+                              </span>
+                            </div>
+                          </div>
+                          <div>{user.username}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
             </div>
           </div>
         </div>
-        <div className="border border-base-100   rounded-box overflow-hidden">
-          <h2 className="text-xl font-semibold border-b border-base-300 p-3 text-primary shadow bg-base-100">
-            Chats
-          </h2>
-          <div className="h-[calc(100vh-10rem)] overflow-auto">
-            <div className="">
-              {isLoading &&
-                new Array(7).fill(0).map((user, index) => (
-                  <div
-                    key={`${user}-${index}`}
-                    className="flex gap-2 items-center p-3"
-                  >
-                    <div className="skeleton w-8 h-8 mask mask-squircle"></div>
-                    <div className="flex flex-col gap-4">
-                      <div className="skeleton h-2 w-52"></div>
-                    </div>
-                  </div>
-                ))}
-              {!isLoading &&
-                users.map((user) => {
-                  return (
-                    <div
-                      key={user.id}
-                      className={classNames(
-                        "hover:bg-base-300 hover:text-primary  hover:border-none hover:glass p-3 cursor-pointer border-b last:border-b-0 border-base-100  font-semibold",
-                        {
-                          "bg-base-300 glass text-primary border-none":
-                            oppositeParticipant?.id == user.id,
-                        }
-                      )}
-                      onClick={() =>
-                        handleChatClick(`${currentUserId}`, user.id)
-                      }
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="avatar placeholder ">
-                          <div
-                            className={
-                              "rounded-box w-10 bg-base-200 text-base-content glass mask mask-squircle"
-                            }
-                          >
-                            <span className="text-xl uppercase font-semibold">
-                              {user.username.substring(0, 1)}
-                            </span>
-                          </div>
-                        </div>
-                        <div>{user.username}</div>
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* right side */}
       <div
         className={classNames("flex flex-col h-screen  text-sm", {
-          "justify-center items-center": !currentChat,
+          "justify-center items-center": !currentChat || isMessagesLoading,
           "hidden md:flex": showUsersPanel,
         })}
       >
-        <div className=" glass bg-base-300 p-2 gap-3 cursor-pointer flex items-center md:hidden">
+        {/* loading when retrieving chatts */}
+        {messages.length === 0 ||
+          (isMessagesLoading && (
+            <span className="loading loading-infinity loading-lg text-primary" />
+          ))}
+        <div
+          className={classNames(
+            "glass bg-base-300 p-2 gap-3 cursor-pointer flex items-center ",
+            {
+              "hidden ":
+                !currentChat ||
+                (currentChat && isMessagesLoading) ||
+                (!currentChat && messages.length === 0),
+            }
+          )}
+        >
           <span
-            className=" text-2xl btn btn-sm btn-ghost "
+            className={" text-2xl btn btn-sm btn-ghost md:hidden"}
             onClick={() => setShowUsersPanel(true)}
           >
             ❮
           </span>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-1 items-center gap-4">
             <div className="avatar placeholder">
               <div
                 className={
@@ -273,6 +299,7 @@ const Chat = () => {
             </div>
             <div className="text-base">{oppositeParticipant?.username}</div>
           </div>
+          <VideoButton />
         </div>
 
         <div
@@ -333,14 +360,12 @@ const Chat = () => {
               </div>
             </div>
           </div>
-          {
-            <span
-              className={classNames(
-                "loading loading-infinity loading-lg text-primary opacity-0",
-                { "opacity-100 ": isChatLoading }
-              )}
-            ></span>
-          }
+          <span
+            className={classNames(
+              "loading loading-infinity loading-lg text-primary opacity-0",
+              { "opacity-100 ": isChatLoading }
+            )}
+          ></span>
         </div>
         <div
           className={classNames("flex-1 px-5 items-end", {
@@ -374,10 +399,12 @@ const Chat = () => {
           </div>
         </div>
         <div
-          ref={chatRef}
           className={classNames("flex-1 p-5 overflow-y-auto", {
             "hidden ":
-              messages?.length === 0 || (currentChat && isMessagesLoading),
+              video ||
+              messages?.length === 0 ||
+              !currentChat ||
+              (currentChat && isMessagesLoading),
           })}
         >
           {messages?.length > 0 &&
@@ -386,16 +413,24 @@ const Chat = () => {
                 return (
                   <div className="chat chat-end" key={message.id}>
                     <div className="chat-image avatar placeholder  mask mask-squircle">
-                      <div className="bg-base-300 glass text-neutral-content rounded-full w-8">
+                      <div className="bg-accent text-accent-content rounded-full w-8">
                         <span className="text-lg uppercase font-semibold">
                           {username && username.substring(0, 1)}
                         </span>
                       </div>
                     </div>
-                    <div className="chat-bubble">{message.content}</div>
+                    <div className="chat-bubble chat-bubble-accent">
+                      {message.content}
+                    </div>
                     <div className="chat-footer opacity-50">
-                      <time className="text-xs opacity-50">
-                        {new Date(message.createdAt).toLocaleTimeString()}
+                      <time className="text-xs hover:underline">
+                        <Timeago
+                          date={message.createdAt}
+                          title={new Date().toLocaleString("en-US", {
+                            dateStyle: "full",
+                            timeStyle: "short",
+                          })}
+                        />
                       </time>
                     </div>
                   </div>
@@ -406,7 +441,7 @@ const Chat = () => {
                   <div className="chat-image avatar placeholder">
                     <div
                       className={
-                        "rounded-full w-8 bg-primary text-primary-content glass"
+                        "rounded-full w-8 bg-secondary text-secondary-content glass"
                       }
                     >
                       <span className="text-lg uppercase font-semibold">
@@ -414,12 +449,18 @@ const Chat = () => {
                       </span>
                     </div>
                   </div>
-                  <div className="chat-bubble  chat-bubble-primary">
+                  <div className="chat-bubble  chat-bubble-secondary">
                     {message.content}
                   </div>
                   <div className="chat-footer opacity-50">
-                    <time className="text-xs opacityplaceholder-slate-300-50">
-                      {new Date(message.createdAt).toLocaleTimeString()}
+                    <time className="text-xs hover:underline">
+                      <Timeago
+                        date={message.createdAt}
+                        title={new Date().toLocaleString("en-US", {
+                          dateStyle: "full",
+                          timeStyle: "short",
+                        })}
+                      />
                     </time>
                   </div>
                 </div>
@@ -431,6 +472,7 @@ const Chat = () => {
         <form
           className={classNames("flex items-center gap-3 px-5 py-2", {
             "hidden ":
+              video ||
               !currentChat ||
               (currentChat && isMessagesLoading) ||
               (!currentChat && messages.length === 0),
@@ -458,8 +500,15 @@ const Chat = () => {
             )}
           </button>
         </form>
+        <Video
+          audio={true}
+          video={true}
+          chatId={currentChat}
+          videoOn={!!video}
+        />
       </div>
     </div>
   );
 };
+
 export default Chat;

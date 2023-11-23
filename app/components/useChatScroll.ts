@@ -1,41 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useLayoutEffect } from "react";
+import { useAuthContext } from "../auth-provider";
 
 type ChatScrollProps = {
-  chatRef: React.RefObject<HTMLElement>;
   bottomRef: React.RefObject<HTMLElement>;
 };
 
-export const useChatScroll = ({ chatRef, bottomRef }: ChatScrollProps) => {
-  const [hasInitialized, setHasInitialized] = useState(false);
+export const useChatScroll = ({ bottomRef }: ChatScrollProps) => {
+  const { messages } = useAuthContext();
 
-  useEffect(() => {
-    const topDiv = chatRef?.current;
+  useLayoutEffect(() => {
     const bottomDiv = bottomRef?.current;
 
-    const shouldAutoScroll = () => {
-      if (!hasInitialized && bottomDiv) {
-        setHasInitialized(true);
-        return true;
-      }
-
-      if (!topDiv) return false;
-
-      const scrollDistance =
-        topDiv.scrollHeight - topDiv.scrollTop - topDiv.clientHeight;
-      return scrollDistance <= 100;
-    };
-
-    let timeID: NodeJS.Timeout;
-
-    if (shouldAutoScroll()) {
-      timeID = setTimeout(() => {
-        bottomRef.current?.scrollIntoView({
-          behavior: "smooth",
-        });
-      }, 100);
-    }
-    return () => {
-      clearTimeout(timeID);
-    };
-  }, [bottomRef, chatRef, hasInitialized]);
+    bottomDiv?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [messages]);
 };
