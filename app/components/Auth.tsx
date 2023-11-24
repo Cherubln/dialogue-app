@@ -71,7 +71,7 @@ function Register() {
           className="flex flex-col gap-5 glass rounded-box px-12 py-4 max-w-md"
           onSubmit={onSubmit}
         >
-          <div className="text-3xl mb-4 uppercase text-primary font-semibold text-center">
+          <div className="text-3xl mb-4 uppercase text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent  text-center font-semibold ">
             Welcome
           </div>
           <div className="form-control">
@@ -109,20 +109,23 @@ function Register() {
                 : "Don't have an account?"}
             </span>{" "}
             <span
-              className="text-primary hover:underline cursor-pointer"
+              className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent  text-center hover:underline cursor-pointer"
               onClick={() => setIsRegister((prev) => !prev)}
             >
               {isRegister ? "Login" : "Register"}
             </span>
           </div>
           {error && (
-            <div role="alert" className="alert alert-error">
+            <div
+              role="alert"
+              className="alert alert-error p-2 px-5 cursor-pointer"
+              onClick={() => setError("")}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="stroke-current shrink-0 h-6 w-6 cursor-pointer"
+                className="stroke-current shrink-0 h-6 w-6 "
                 fill="none"
                 viewBox="0 0 24 24"
-                onClick={() => setError("")}
               >
                 <path
                   strokeLinecap="round"
@@ -131,7 +134,7 @@ function Register() {
                   d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <span>{error}</span>
+              <span className="text-base">{error}</span>
             </div>
           )}
         </form>
