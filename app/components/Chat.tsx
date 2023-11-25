@@ -449,13 +449,15 @@ const Chat = () => {
                     <p>
                       Hi 👋 there, I am Cherubin. I built this
                       &ldquo;Dialogue&rdquo; App. Find more at my
-                      <a
-                        href="https://github.com/Cherubln"
-                        target="_blank"
-                        className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent hover:underline ml-1"
-                      >
-                        Github page
-                      </a>
+                      <span className="hover:underline">
+                        <a
+                          href="https://github.com/Cherubln"
+                          target="_blank"
+                          className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent hover:underline ml-1"
+                        >
+                          Github page
+                        </a>
+                      </span>
                       .
                     </p>
                   </div>
