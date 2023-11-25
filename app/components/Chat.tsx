@@ -239,10 +239,10 @@ const Chat = () => {
                             ✕
                           </button>
                         </form>
-                        <h3 className="font-bold text-xl capitalize">
+                        <h3 className="font-bold text-lg capitalize">
                           Your friends will miss you!
                         </h3>
-                        <p className="py-4 text-base">
+                        <p className="py-4">
                           Are you sure you want to delete your account?
                         </p>
                         <div className="modal-action mt-0">
