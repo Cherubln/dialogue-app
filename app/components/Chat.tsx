@@ -480,15 +480,15 @@ const Chat = () => {
                 (currentChat && messages?.length !== 0),
             })}
           >
-            <div className="flex flex-col gap-2 mb-20">
+            <div className="flex flex-col gap-2 mb-5">
               <div>
                 <div className="chat-image avatar placeholder">
                   <div
                     className={
-                      "rounded-full w-24 bg-base-300 text-base-content glass"
+                      "rounded-full w-20 bg-base-300 text-base-content glass"
                     }
                   >
-                    <span className="text-6xl uppercase font-semibold text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">
+                    <span className="text-5xl uppercase font-semibold text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">
                       {oppositeParticipant?.username?.substring(0, 1)}
                     </span>
                   </div>
@@ -498,7 +498,7 @@ const Chat = () => {
                 {oppositeParticipant?.username}
               </p>
               <p className="text-sm">
-                Start chatting here with {oppositeParticipant?.username}!
+                Start chat with {oppositeParticipant?.username}!
               </p>
             </div>
           </div>
