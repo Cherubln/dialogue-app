@@ -16,48 +16,60 @@ export const POST = async (req: NextRequest) => {
   const body = await req.json();
   const validation = registerSchema.safeParse(body);
 
-  if (!validation.success) {
-    return NextResponse.json(validation.error.format(), { status: 400 });
-  }
+  try {
+    if (!validation.success) {
+      return NextResponse.json(validation.error.format(), { status: 400 });
+    }
 
-  const hashPassoword = await bcrypt.hash(body.password, 10);
-  const createToken = (userID: string) => {
-    return new Promise((resolve, reject) => {
-      jwt.sign(
-        { userId: userID },
-        jwtSecretKey,
-        (err: Error | null, token: string | undefined) => {
-          if (err) reject(err);
-          resolve(token);
-        }
-      );
+    const createToken = (userID: string) => {
+      return new Promise((resolve, reject) => {
+        jwt.sign(
+          { userId: userID },
+          jwtSecretKey,
+          (err: Error | null, token: string | undefined) => {
+            if (err) reject(err);
+            resolve(token);
+          }
+        );
+      });
+    };
+
+    const existingUser: User = await prisma.user.findUnique({
+      where: {
+        username: body.username,
+      },
     });
-  };
 
-  const existingUser: User = await prisma.user.findUnique({
-    where: {
-      username: body.username,
-    },
-  });
+    if (!existingUser) {
+      return NextResponse.json(
+        { message: "Account not found" },
+        { status: 404 }
+      );
+    }
 
-  const passwordMatch = await bcrypt.compare(`${body.password}`, hashPassoword);
+    const passwordMatch = await bcrypt.compare(
+      body.password,
+      existingUser?.password as string
+    );
 
-  if (existingUser && passwordMatch) {
+    if (!passwordMatch) {
+      return NextResponse.json(
+        { message: "Incorrect password." },
+        { status: 400 }
+      );
+    }
+
     const { username, id } = existingUser;
     const token = await createToken(id);
     const response = NextResponse.json({ username, id }, { status: 200 });
-    response.cookies.set("X-Authorization", `${token}`);
+    response.cookies.set("X-Authorization", token as string);
     return response;
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 }
+    );
   }
-
-  if (!existingUser) {
-    return NextResponse.json({ message: "Account not found" }, { status: 404 });
-  }
-
-  return NextResponse.json(
-    { message: "Password does not match." },
-    { status: 400 }
-  );
 };
 
 export const GET = async (req: NextRequest) => {

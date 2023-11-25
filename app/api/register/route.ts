@@ -30,7 +30,8 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json(validation.error.format(), { status: 400 });
   }
 
-  const hashPassoword = await bcrypt.hash(body.password, 10);
+  const hashPassword = await bcrypt.hash(body.password, 10);
+
   const createToken = (userID: string) => {
     return new Promise((resolve, reject) => {
       jwt.sign(
@@ -47,7 +48,7 @@ export const POST = async (req: NextRequest) => {
   const user: User = await prisma.user.create({
     data: {
       username: body.username,
-      password: hashPassoword,
+      password: hashPassword,
       picture: variations[Math.floor(Math.random() * variations.length)],
     },
   });
@@ -56,7 +57,7 @@ export const POST = async (req: NextRequest) => {
     const { username, id } = user;
     const token = await createToken(id);
     const response = NextResponse.json({ username, id }, { status: 201 });
-    response.cookies.set("X-Authorization", `${token}`);
+    response.cookies.set("X-Authorization", token as string);
     return response;
   }
   return NextResponse.json(

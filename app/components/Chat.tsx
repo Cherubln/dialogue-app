@@ -46,11 +46,13 @@ const Chat = () => {
   const [isChatLoading, setIsChatLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState("");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isDeletingUser, setIsDeletingUser] = useState(false);
   const [oppositeParticipant, setOppositeParticipant] = useState<{
     username: string | null;
   }>({ username: null });
   const [showUsersPanel, setShowUsersPanel] = useState(true);
   const bottomRef = useRef<ElementRef<"div">>(null);
+  const modalRef = useRef<ElementRef<"dialog">>(null);
   const searchParms = useSearchParams();
   const video = searchParms?.get("video");
 
@@ -72,6 +74,20 @@ const Chat = () => {
       console.log(error);
     } finally {
       setIsLoggingOut(false);
+    }
+  };
+  const deleteAccount = async () => {
+    try {
+      setIsDeletingUser(true);
+      await axios.delete("/api/delete-account", {
+        data: { username },
+      });
+      modalRef?.current?.close();
+      setUsername("");
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsDeletingUser(false);
     }
   };
 
@@ -149,10 +165,7 @@ const Chat = () => {
   const chatKey = `chat:${currentChat}:messages`;
 
   useChatSocket(chatKey);
-
   useChatScroll({ bottomRef });
-
-  console.log(messages);
 
   return (
     <>
@@ -213,6 +226,42 @@ const Chat = () => {
                     className="flex flex-col-reverse gap-2 dropdown-content z-[1] menu p-2 shadow bg-base-300 glass rounded-btn w-52"
                   >
                     <span
+                      className="btn btn-sm btn-ghost text-primary text-sm w-full font-semibold"
+                      onClick={() => modalRef?.current?.showModal()}
+                    >
+                      Delete Account
+                    </span>
+                    <dialog id="my_modal_3" className="modal" ref={modalRef}>
+                      <div className="modal-box">
+                        <form method="dialog">
+                          {/* if there is a button in form, it will close the modal */}
+                          <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
+                            ✕
+                          </button>
+                        </form>
+                        <h3 className="font-bold text-lg">
+                          Your friends will miss you!
+                        </h3>
+                        <p className="py-4">
+                          Are you sure you want to delete your account?
+                        </p>
+                        <div className="modal-action">
+                          {/* if there is a button in form, it will close the modal */}
+                          <span
+                            className={classNames(
+                              "btn btn-sm btn-ghost text-primary text-sm  font-semibold",
+                              { "btn-disabled": isDeletingUser }
+                            )}
+                            onClick={deleteAccount}
+                          >
+                            {isDeletingUser
+                              ? "Deleting Account"
+                              : "Delete Account"}
+                          </span>
+                        </div>
+                      </div>
+                    </dialog>
+                    <span
                       className={classNames(
                         "btn btn-sm btn-ghost text-primary text-sm w-full font-semibold",
                         { "btn-disabled": isLoggingOut }
@@ -221,27 +270,18 @@ const Chat = () => {
                     >
                       <a>{isLoggingOut ? "Logging out" : "Logout"}</a>
                     </span>
-                    <label className="flex justify-center cursor-pointer gap-2">
-                      <span className="label-text">Dark</span>
-                      <input
-                        type="checkbox"
-                        value="fantasy"
-                        className="toggle theme-controller"
-                      />
-                      <span className="label-text">Light</span>
-                    </label>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="border border-base-100 rounded-btn overflow-hidden">
-              <h2 className="text-xl font-semibold border-b border-base-300 p-3">
+            <div className="h-full border border-base-100 rounded-btn overflow-hidden">
+              <h2 className="h-12 text-xl font-semibold border-b border-base-300 p-3">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">
                   Chats
                 </span>
               </h2>
-              <div className="h-[calc(100vh-10rem)] overflow-auto">
-                <div className="">
+              <div className="h-[calc(100%-3rem)] overflow-auto scrollbar-thumb-base-content scrollbar-track-base-300 scrollbar-thin scrollbar-track-rounded-md scrollbar-thumb-rounded-md">
+                <div>
                   {isLoading &&
                     new Array(7).fill(0).map((user, index) => (
                       <div
@@ -274,7 +314,7 @@ const Chat = () => {
                             <div className="avatar placeholder ">
                               <div
                                 className={
-                                  "rounded-box w-10 bg-base-200 text-base-content glass mask mask-squircle"
+                                  "w-10 bg-base-300 text-base-content glass mask mask-circle"
                                 }
                               >
                                 <span
@@ -305,10 +345,19 @@ const Chat = () => {
                 </div>
               </div>
             </div>
-            <div className="rounded-btn border border-base-100 p-2 px-3 text-center">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent text-2xl font-bold ">
+            <div className="rounded-btn border border-base-100 p-2 flex items-center">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent text-xl font-bold flex-1">
                 Welcome {username}
               </span>
+              <label className="flex justify-center cursor-pointer gap-2">
+                <span className="label-text">Dark</span>
+                <input
+                  type="checkbox"
+                  value="fantasy"
+                  className="toggle theme-controller"
+                />
+                <span className="label-text">Light</span>
+              </label>
             </div>
           </div>
         )}
@@ -455,7 +504,7 @@ const Chat = () => {
           </div>
           <div
             className={classNames(
-              "flex-1 p-5 overflow-y-auto scrollbar-thumb-base-content scrollbar-track-base-300 scrollbar-thin scrollbar-track-rounded-md scrollbar-thumb-rounded-md",
+              "flex-1 p-5 overflow-y-auto scrollbar-thumb-base-content scrollbar-track-base-300 hover:scrollbar-thin scrollbar-track-rounded-md scrollbar-thumb-rounded-md scrollbar-none",
               {
                 "hidden ":
                   video ||

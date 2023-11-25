@@ -26,9 +26,9 @@ model Message {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   content   String
   authorId  String   @db.ObjectId
-  author    User     @relation(fields: [authorId], references: [id])
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   chatId    String   @db.ObjectId
-  chat      Chat     @relation(fields: [chatId], references: [id])
+  chat      Chat     @relation(fields: [chatId], references: [id],onDelete:Cascade)
   fileUrl   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -38,10 +38,10 @@ model Chat {
   id String @id @default(auto()) @map("_id") @db.ObjectId
 
   participantOneId String @db.ObjectId
-  participantOne   User   @relation("participantOne", fields: [participantOneId], references: [id])
+  participantOne   User   @relation("participantOne", fields: [participantOneId], references: [id], onDelete: Cascade)
 
   participantTwoId String    @db.ObjectId
-  participantTwo   User      @relation("participantTwo", fields: [participantTwoId], references: [id])
+  participantTwo   User      @relation("participantTwo", fields: [participantTwoId], references: [id], onDelete: Cascade)
   messages         Message[]
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt

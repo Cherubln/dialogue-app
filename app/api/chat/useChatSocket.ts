@@ -20,7 +20,6 @@ export const useChatSocket = (addKey: string) => {
     socket.on(addKey, (message: Message) => {
       setMessages((messages: Message[]) => [...messages, message]);
     });
-    console.log(socket);
     return () => {
       socket.off(addKey);
     };

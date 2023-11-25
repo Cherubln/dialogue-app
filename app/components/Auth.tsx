@@ -32,12 +32,17 @@ function Register() {
       const {
         data: { username, id },
       } = await axios.get("/api/login");
+
       setUsername(username);
       setId(id);
-    } catch {
-      console.log(error);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const errorMessage = error?.response?.data.message;
+        setError(errorMessage);
+      }
     } finally {
       setIsLoading(false);
+      setError("");
     }
   };
 
