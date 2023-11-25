@@ -178,7 +178,9 @@ const Chat = () => {
         {/* Other meta tags */}
       </Head>
       <div
-        className={classNames("grid ", { "md:grid-cols-[32%,auto]": !video })}
+        className={classNames("grid ", {
+          "md:grid-cols-[minmax(20rem,32%),auto]": !video,
+        })}
       >
         {/* left side */}
         {!video && (
@@ -272,13 +274,13 @@ const Chat = () => {
                 </div>
               </div>
             </div>
-            <div className="h-full border border-base-100 rounded-btn overflow-hidden">
+            <div className="order-2 md:order-1 h-full border border-base-100 rounded-btn overflow-hidden">
               <h2 className="h-12 text-xl font-semibold border-b border-base-300 p-3">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent">
                   Chats
                 </span>
               </h2>
-              <div className="h-[calc(100%-3rem)] overflow-auto scrollbar-thumb-base-content scrollbar-track-base-300 scrollbar-thin scrollbar-track-rounded-md scrollbar-thumb-rounded-md">
+              <div className=" h-[calc(100%-3rem)] overflow-auto scrollbar-thumb-base-content scrollbar-track-base-300 scrollbar-thin scrollbar-track-rounded-md scrollbar-thumb-rounded-md">
                 <div>
                   {isLoading &&
                     new Array(7).fill(0).map((user, index) => (
@@ -343,7 +345,7 @@ const Chat = () => {
                 </div>
               </div>
             </div>
-            <div className="rounded-btn border border-base-100 p-2 flex items-center">
+            <div className="order-1 md:order-2 rounded-btn border border-base-100 p-2 flex items-center">
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent text-xl font-bold flex-1">
                 Welcome {username}
               </span>
