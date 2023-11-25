@@ -202,10 +202,10 @@ const Chat = () => {
                 />
               </div>
               <div>
-                <div className="dropdown dropdown-hover dropdown-end">
+                <div className="dropdown  dropdown-end">
                   <label
                     tabIndex={0}
-                    className="rounded-btn cursor-pointer p-1 m-1 btn-ghost"
+                    className="btn btn-sm btn-circle btn-ghost cursor-pointer p-1 m-1"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -223,7 +223,7 @@ const Chat = () => {
                   </label>
                   <div
                     tabIndex={0}
-                    className="flex flex-col-reverse gap-2 dropdown-content z-[1] menu p-2 shadow bg-base-300 glass rounded-btn w-52"
+                    className="flex flex-col-reverse gap-2 dropdown-content z-[1] menu p-2 shadow bg-base-300 glass rounded-btn w-40"
                   >
                     <span
                       className="btn btn-sm btn-ghost text-primary text-sm w-full font-semibold"
@@ -231,7 +231,7 @@ const Chat = () => {
                     >
                       Delete Account
                     </span>
-                    <dialog id="my_modal_3" className="modal" ref={modalRef}>
+                    <dialog className="modal" ref={modalRef}>
                       <div className="modal-box">
                         <form method="dialog">
                           {/* if there is a button in form, it will close the modal */}
@@ -239,24 +239,22 @@ const Chat = () => {
                             ✕
                           </button>
                         </form>
-                        <h3 className="font-bold text-lg">
+                        <h3 className="font-bold text-xl capitalize">
                           Your friends will miss you!
                         </h3>
-                        <p className="py-4">
+                        <p className="py-4 text-base">
                           Are you sure you want to delete your account?
                         </p>
-                        <div className="modal-action">
+                        <div className="modal-action mt-0">
                           {/* if there is a button in form, it will close the modal */}
                           <span
                             className={classNames(
-                              "btn btn-sm btn-ghost text-primary text-sm  font-semibold",
+                              "btn btn-sm  btn-ghost text-primary text-sm  font-semibold",
                               { "btn-disabled": isDeletingUser }
                             )}
                             onClick={deleteAccount}
                           >
-                            {isDeletingUser
-                              ? "Deleting Account"
-                              : "Delete Account"}
+                            {isDeletingUser ? "Deleting" : "Delete"}
                           </span>
                         </div>
                       </div>
