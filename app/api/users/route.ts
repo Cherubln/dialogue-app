@@ -24,6 +24,9 @@ export const GET = async (req: NextRequest) => {
         id: userId,
       },
     },
+    orderBy: {
+      username: "asc",
+    },
   });
   return NextResponse.json(users, { status: 200 });
 };
