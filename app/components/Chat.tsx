@@ -167,6 +167,8 @@ const Chat = () => {
   useChatSocket(chatKey);
   useChatScroll({ bottomRef });
 
+  let previousDate: string;
+
   return (
     <>
       <Head>
@@ -512,7 +514,7 @@ const Chat = () => {
           </div>
           <div
             className={classNames(
-              "flex-1 p-5 overflow-y-auto scrollbar-thumb-base-content scrollbar-track-base-300 hover:scrollbar-thin scrollbar-track-rounded-md scrollbar-thumb-rounded-md scrollbar-none",
+              "relative flex-1 p-5 overflow-y-auto scrollbar-thumb-base-content scrollbar-track-base-300 scrollbar-thin scrollbar-track-rounded-md scrollbar-thumb-rounded-md",
               {
                 "hidden ":
                   video ||
@@ -523,64 +525,101 @@ const Chat = () => {
             )}
           >
             {messages?.length > 0 &&
-              messages?.map((message: Message) => {
-                if (message.authorId === currentUserId) {
-                  return (
-                    <div className="chat chat-end" key={message.id}>
-                      <div className="chat-image avatar placeholder  mask mask-squircle">
-                        <div className="bg-accent text-accent-content rounded-full w-8">
-                          <span className="text-lg uppercase font-semibold">
-                            {username && username.substring(0, 1)}
-                          </span>
+              messages?.map(
+                (message: Message, index: number, messages: Message[]) => {
+                  const messageDate = formatDate(new Date(message.createdAt));
+                  if (index === 0) {
+                    previousDate = "";
+                  } else {
+                    previousDate = formatDate(
+                      new Date(messages[index - 1].createdAt)
+                    );
+                  }
+
+                  if (message.authorId === currentUserId) {
+                    return (
+                      <div key={message.id}>
+                        <div
+                          className={classNames({
+                            "mx-auto my-1.5 p-1.5 bg-base-300 rounded-btn text-base-content opacity-50 w-fit":
+                              previousDate !== messageDate,
+                          })}
+                        >
+                          {previousDate === messageDate
+                            ? ""
+                            : new Date(messageDate).toLocaleString("en-US", {
+                                dateStyle: "full",
+                              })}
+                        </div>
+                        <div className="chat chat-end">
+                          <div className="chat-image avatar placeholder  mask mask-squircle">
+                            <div className="bg-accent text-accent-content rounded-full w-8 glass">
+                              <span className="text-lg uppercase font-semibold">
+                                {username && username.substring(0, 1)}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="chat-bubble chat-bubble-accent ">
+                            {message.content}
+                          </div>
+                          <div className="chat-footer opacity-50">
+                            <time className="text-xs">
+                              {new Date(message?.createdAt).toLocaleString(
+                                "en-US",
+                                {
+                                  timeStyle: "short",
+                                }
+                              )}
+                            </time>
+                          </div>
                         </div>
                       </div>
-                      <div className="chat-bubble chat-bubble-accent ">
-                        {message.content}
-                      </div>
-                      <div className="chat-footer opacity-50">
-                        <time className="text-xs hover:underline">
-                          <Timeago
-                            date={message?.createdAt}
-                            title={new Date().toLocaleString("en-US", {
+                    );
+                  }
+                  return (
+                    <div key={message?.id}>
+                      <div
+                        className={classNames({
+                          "mx-auto my-1.5 p-1.5 bg-base-300 rounded-btn text-base-content opacity-50 w-fit":
+                            previousDate !== messageDate,
+                        })}
+                      >
+                        {previousDate === messageDate
+                          ? ""
+                          : new Date(messageDate).toLocaleString("en-US", {
                               dateStyle: "full",
-                              timeStyle: "short",
                             })}
-                          />
-                        </time>
+                      </div>
+                      <div className="chat chat-start">
+                        <div className="chat-image avatar placeholder">
+                          <div
+                            className={
+                              "rounded-full w-8 bg-secondary text-secondary-content glass"
+                            }
+                          >
+                            <span className="text-lg uppercase font-semibold">
+                              {oppositeParticipant?.username?.substring(0, 1)}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="chat-bubble  chat-bubble-secondary">
+                          {message.content}
+                        </div>
+                        <div className="chat-footer opacity-50">
+                          <time className="text-xs">
+                            {new Date(message?.createdAt).toLocaleString(
+                              "en-US",
+                              {
+                                timeStyle: "short",
+                              }
+                            )}
+                          </time>
+                        </div>
                       </div>
                     </div>
                   );
                 }
-                return (
-                  <div className="chat chat-start" key={message?.id}>
-                    <div className="chat-image avatar placeholder">
-                      <div
-                        className={
-                          "rounded-full w-8 bg-secondary text-secondary-content glass"
-                        }
-                      >
-                        <span className="text-lg uppercase font-semibold">
-                          {oppositeParticipant?.username?.substring(0, 1)}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="chat-bubble  chat-bubble-secondary">
-                      {message.content}
-                    </div>
-                    <div className="chat-footer opacity-50">
-                      <time className="text-xs hover:underline">
-                        <Timeago
-                          date={message.createdAt}
-                          title={new Date().toLocaleString("en-US", {
-                            dateStyle: "full",
-                            timeStyle: "short",
-                          })}
-                        />
-                      </time>
-                    </div>
-                  </div>
-                );
-              })}
+              )}
             <div ref={bottomRef} />
           </div>
 
@@ -626,5 +665,14 @@ const Chat = () => {
     </>
   );
 };
+
+function formatDate(date: Date) {
+  const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+  const formatter = new Intl.DateTimeFormat(
+    "en-US",
+    options as Intl.DateTimeFormatOptions
+  );
+  return formatter.format(date);
+}
 
 export default Chat;
