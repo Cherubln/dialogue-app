@@ -528,6 +528,9 @@ const Chat = () => {
               messages?.map(
                 (message: Message, index: number, messages: Message[]) => {
                   const messageDate = formatDate(new Date(message.createdAt));
+                  let suffix = getDaySuffix(
+                    new Date(message.createdAt).getDate()
+                  );
                   if (index === 0) {
                     previousDate = "";
                   } else {
@@ -541,15 +544,22 @@ const Chat = () => {
                       <div key={message.id}>
                         <div
                           className={classNames({
-                            "mx-auto my-1.5 p-1.5 bg-base-300 rounded-btn text-base-content opacity-50 w-fit":
+                            "mx-auto my-1.5 py-1.5 px-3 bg-base-300 rounded-box text-base-content opacity-50 w-fit border border-base-content text-xs font-semibold":
                               previousDate !== messageDate,
                           })}
                         >
-                          {previousDate === messageDate
-                            ? ""
-                            : new Date(messageDate).toLocaleString("en-US", {
-                                dateStyle: "full",
+                          {previousDate === messageDate ? (
+                            ""
+                          ) : (
+                            <>
+                              {new Date(messageDate).toLocaleString("en-US", {
+                                weekday: "long",
+                                day: "numeric",
+                                month: "long",
                               })}
+                              <sup>{suffix}</sup>
+                            </>
+                          )}
                         </div>
                         <div className="chat chat-end">
                           <div className="chat-image avatar placeholder  mask mask-squircle">
@@ -580,15 +590,22 @@ const Chat = () => {
                     <div key={message?.id}>
                       <div
                         className={classNames({
-                          "mx-auto my-1.5 p-1.5 bg-base-300 rounded-btn text-base-content opacity-50 w-fit":
+                          "mx-auto my-1.5 py-1.5 px-3 bg-base-300 rounded-box text-base-content opacity-50 w-fit border border-base-content text-xs font-semibold":
                             previousDate !== messageDate,
                         })}
                       >
-                        {previousDate === messageDate
-                          ? ""
-                          : new Date(messageDate).toLocaleString("en-US", {
-                              dateStyle: "full",
+                        {previousDate === messageDate ? (
+                          ""
+                        ) : (
+                          <>
+                            {new Date(messageDate).toLocaleString("en-US", {
+                              weekday: "long",
+                              day: "numeric",
+                              month: "long",
                             })}
+                            <sup>{suffix}</sup>
+                          </>
+                        )}
                       </div>
                       <div className="chat chat-start">
                         <div className="chat-image avatar placeholder">
@@ -665,6 +682,19 @@ const Chat = () => {
     </>
   );
 };
+function getDaySuffix(day) {
+  if (day > 3 && day < 21) return "th";
+  switch (day % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
+}
 
 function formatDate(date: Date) {
   const options = { day: "2-digit", month: "2-digit", year: "numeric" };
