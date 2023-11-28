@@ -682,7 +682,7 @@ const Chat = () => {
     </>
   );
 };
-function getDaySuffix(day) {
+function getDaySuffix(day: number) {
   if (day > 3 && day < 21) return "th";
   switch (day % 10) {
     case 1:
