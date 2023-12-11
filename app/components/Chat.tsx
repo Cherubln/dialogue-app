@@ -238,7 +238,6 @@ const Chat = () => {
                     <dialog className="modal" ref={modalRef}>
                       <div className="modal-box">
                         <form method="dialog">
-                          {/* if there is a button in form, it will close the modal */}
                           <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
                             ✕
                           </button>
@@ -250,7 +249,6 @@ const Chat = () => {
                           Are you sure you want to delete your account?
                         </p>
                         <div className="modal-action mt-0">
-                          {/* if there is a button in form, it will close the modal */}
                           <span
                             className={classNames(
                               "btn btn-sm  btn-ghost text-primary text-sm  font-semibold",
@@ -277,7 +275,7 @@ const Chat = () => {
               </div>
             </div>
             <div className="order-2 md:order-1 h-full border border-base-100 rounded-btn overflow-hidden">
-              <h2 className="h-12 text-xl font-semibold border-b border-base-300 p-3">
+              <h2 className="h-16 text-2xl font-semibold border-b border-base-300 p-4">
                 <span
                   className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent cursor-pointer"
                   onClick={() => {
