@@ -77,7 +77,7 @@ This is the list of things you need to use the software and how to install them.
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/Cherubln/game-hub.git
+   git clone https://github.com/Cherubln/dialogue-app.git
    ```
 2. Install NPM packages
    ```sh
