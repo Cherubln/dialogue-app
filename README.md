@@ -171,5 +171,5 @@ List of some resources I find helpful and would like to give credit to!
 [Zod-url]: https://zod.dev
 [SocketIo]: https://img.shields.io/badge/Socket.IO-20232A?style=for-the-badge&logo=socketdotio
 [SocketIo-url]: https://www.socket.io/
-[Deployment-status]: https://img.shields.io/badge/deployment-success-8A2BE2?logo=railway&labelColor=%238A2BE2&color=green
+[Deployment-status]: https://img.shields.io/badge/deployment-success-8A2BE2?logo=vercel&labelColor=black&color=green
 [Deployment-url]: https://dialogue-app-production.up.railway.app
