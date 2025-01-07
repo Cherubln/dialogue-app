@@ -140,7 +140,7 @@ Project Link: [https://github.com/Cherubln/dialogue-app](https://github.com/Cher
 
 List of some resources I find helpful and would like to give credit to!
 
-- [Railway](https://railway.app)
+- [Vercel](https://vercel.comv)
 
 <p align="right">(<a href="#readme-top">&#x1F51D;</a>)</p>
 
